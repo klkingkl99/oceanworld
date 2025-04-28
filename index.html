@@ -4,27 +4,192 @@
     <meta charset="UTF-8">
     <title>珍珠捕捞游戏</title>
     <style>
-        body { background: #0077be; margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
-        .shell { width: 100px; height: 80px; margin: 20px; background: #f5deb3; border-radius: 50% 50% 0 0; display: inline-block; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2);}
-        .shell:hover { transform: scale(1.1);}
-        .popup { display: none; position: fixed; top: 40%; left: 50%; transform: translate(-50%,-50%); background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 5px 25px rgba(0,0,0,0.3);}
-        .claim-button { margin-top: 20px; padding: 10px 30px; background: #4CAF50; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;}
-        .music-control { position: fixed; top: 20px; right: 20px; width: 40px; height: 40px; background: #fff7; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .music-icon { width: 20px; height: 20px; background: #0077be; border-radius: 50%; }
-        .muted .music-icon { background: #ff0000; }
+        body {
+            background: linear-gradient(to bottom, #0077be 0%, #0099cc 100%);
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
+        .shells-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px 40px;
+            max-width: 900px;
+            margin: 80px auto 0 auto;
+        }
+        .shell {
+            width: 100px;
+            height: 90px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            background: none;
+        }
+        .shell:hover {
+            transform: scale(1.08);
+        }
+        .shell-shape {
+            width: 100px;
+            height: 80px;
+            background: radial-gradient(ellipse at 50% 60%, #fffbe6 60%, #f5deb3 100%);
+            border-radius: 60px 60px 60px 60px / 60px 60px 40px 40px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.18), 0 2px 0 #e6ccb2 inset;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+        .shell-lines {
+            position: absolute;
+            bottom: 18px;
+            left: 50%;
+            width: 80px;
+            height: 40px;
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+        .shell-lines span {
+            display: block;
+            position: absolute;
+            height: 32px;
+            width: 2px;
+            background: linear-gradient(to bottom, #e6ccb2 60%, #fffbe6 100%);
+            border-radius: 2px;
+            opacity: 0.7;
+        }
+        .shell-lines span:nth-child(1) { left: 10px; }
+        .shell-lines span:nth-child(2) { left: 22px; }
+        .shell-lines span:nth-child(3) { left: 34px; }
+        .shell-lines span:nth-child(4) { left: 46px; }
+        .shell-lines span:nth-child(5) { left: 58px; }
+        .shell.clicked .shell-shape {
+            box-shadow: 0 0 30px 10px #ffe4b5, 0 8px 20px rgba(0,0,0,0.18);
+            filter: brightness(1.1);
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            background: #fff;
+            padding: 24px 36px;
+            border-radius: 14px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.18);
+            z-index: 100;
+            text-align: center;
+        }
+        .claim-button {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: #fff7;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .music-icon {
+            width: 20px;
+            height: 20px;
+            background: #0077be;
+            border-radius: 50%;
+            position: relative;
+        }
+        .muted .music-icon {
+            background: #ff0000;
+        }
+        /* 气泡动画 */
+        @keyframes bubble {
+            0% { transform: translateY(0) scale(1); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+        }
+        .bubble {
+            position: fixed;
+            bottom: -20px;
+            background-color: rgba(255, 255, 255, 0.18);
+            border-radius: 50%;
+            z-index: 0;
+        }
     </style>
 </head>
 <body>
-    <div style="text-align:center;margin-top:60px;">
-        <div class="shell" onclick="openShell(this)"></div>
-        <div class="shell" onclick="openShell(this)"></div>
-        <div class="shell" onclick="openShell(this)"></div>
-        <div class="shell" onclick="openShell(this)"></div>
-        <div class="shell" onclick="openShell(this)"></div>
-        <div class="shell" onclick="openShell(this)"></div>
-        <div class="shell" onclick="openShell(this)"></div>
-        <div class="shell" onclick="openShell(this)"></div>
-        <div class="shell" onclick="openShell(this)"></div>
+    <div class="shells-wrapper">
+        <div class="shell" onclick="openShell(this)">
+            <div class="shell-shape"></div>
+            <div class="shell-lines">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="shell" onclick="openShell(this)">
+            <div class="shell-shape"></div>
+            <div class="shell-lines">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="shell" onclick="openShell(this)">
+            <div class="shell-shape"></div>
+            <div class="shell-lines">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="shell" onclick="openShell(this)">
+            <div class="shell-shape"></div>
+            <div class="shell-lines">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="shell" onclick="openShell(this)">
+            <div class="shell-shape"></div>
+            <div class="shell-lines">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="shell" onclick="openShell(this)">
+            <div class="shell-shape"></div>
+            <div class="shell-lines">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="shell" onclick="openShell(this)">
+            <div class="shell-shape"></div>
+            <div class="shell-lines">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="shell" onclick="openShell(this)">
+            <div class="shell-shape"></div>
+            <div class="shell-lines">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="shell" onclick="openShell(this)">
+            <div class="shell-shape"></div>
+            <div class="shell-lines">
+                <span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
     </div>
     <div class="popup" id="popup">
         <p id="reward-message"></p>
@@ -38,6 +203,22 @@
         您的浏览器不支持音频元素。
     </audio>
     <script>
+        // 气泡动画
+        function createBubbles() {
+            for (let i = 0; i < 20; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                const size = Math.random() * 30 + 10;
+                const left = Math.random() * 100;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                bubble.style.left = `${left}%`;
+                const animationDuration = Math.random() * 10 + 5;
+                bubble.style.animation = `bubble ${animationDuration}s linear infinite`;
+                bubble.style.animationDelay = `${Math.random() * 5}s`;
+                document.body.appendChild(bubble);
+            }
+        }
         let isMusicPlaying = false;
         const musicControl = document.getElementById('musicBtn');
         const backgroundSound = document.getElementById('background-sound');
@@ -54,18 +235,18 @@
         function openShell(shell) {
             document.getElementById('reward-message').innerText = "恭喜获得奖励！";
             document.getElementById('popup').style.display = 'block';
-            shell.style.background = "#ffe4b5";
+            shell.classList.add('clicked');
             shell.style.pointerEvents = "none";
             if (!isMusicPlaying) toggleMusic();
         }
         function closePopup() {
             document.getElementById('popup').style.display = 'none';
         }
-        // 兼容GitHub Pages自动播放策略，首次用户点击才允许播放
         document.addEventListener('click', function enableAudio() {
             backgroundSound.load();
             document.removeEventListener('click', enableAudio);
         }, { once: true });
+        window.onload = createBubbles;
     </script>
 </body>
 </html>
