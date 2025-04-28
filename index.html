@@ -1,183 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>珍珠捕捞游戏</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #0077be; /* 海洋蓝色背景 */
-            overflow: hidden;
-        }
-        
-        /* 创建海底背景效果 */
-        body:before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 20%),
-                radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 20%),
-                radial-gradient(circle at 40% 50%, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 20%);
-            z-index: -1;
-        }
-        
-        /* 创建气泡效果 */
-        @keyframes bubble {
-            0% { transform: translateY(0) scale(1); opacity: 0; }
-            50% { opacity: 0.5; }
-            100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
-        }
-        
-        .bubble {
-            position: fixed;
-            bottom: -20px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            z-index: -1;
-        }
-        
-        .game-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        
-        /* 贝壳样式 */
-        .shell {
-            width: 100px;
-            height: 80px;
-            margin: 15px;
-            background-color: #f5deb3;
-            border-radius: 50% 50% 0 0;
-            cursor: pointer;
-            transition: transform 0.3s;
-            position: relative;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        .shell:after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 50%;
-            background-color: #e6ccb2;
-            border-radius: 0 0 50% 50%;
-        }
-        
-        .shell:hover {
-            transform: scale(1.1);
-        }
-        
-        .shell.clicked {
-            animation: openShellAnimation 0.5s forwards;
-        }
-        
-        @keyframes openShellAnimation {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2) rotate(5deg); }
-            100% { transform: scale(1) rotate(-5deg); }
-        }
-        
-        .popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            display: none;
-            text-align: center;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.3);
-            z-index: 100;
-        }
-        
-        .claim-button {
-            margin-top: 20px;
-            padding: 15px 30px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-        
-        .claim-button:hover {
-            background-color: #45a049;
-        }
-        
-        /* 音乐控制按钮样式 */
-        .music-control {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(255, 255, 255, 0.7);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            z-index: 10;
-        }
-        
-        .music-control:hover {
-            background-color: rgba(255, 255, 255, 0.9);
-        }
-        
-        .music-icon {
-            width: 20px;
-            height: 20px;
-            position: relative;
-        }
-        
-        .music-icon:before,
-        .music-icon:after {
-            content: "";
-            position: absolute;
-            background-color: #0077be;
-        }
-        
-        .music-icon:before {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            top: 6px;
-            left: 2px;
-        }
-        
-        .music-icon:after {
-            width: 2px;
-            height: 14px;
-            top: 3px;
-            left: 12px;
-        }
-        
-        .muted .music-icon:before,
-        .muted .music-icon:after {
-            background-color: #ff0000;
-        }
+        body { background: #0077be; margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+        .shell { width: 100px; height: 80px; margin: 20px; background: #f5deb3; border-radius: 50% 50% 0 0; display: inline-block; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2);}
+        .shell:hover { transform: scale(1.1);}
+        .popup { display: none; position: fixed; top: 40%; left: 50%; transform: translate(-50%,-50%); background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 5px 25px rgba(0,0,0,0.3);}
+        .claim-button { margin-top: 20px; padding: 10px 30px; background: #4CAF50; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;}
+        .music-control { position: fixed; top: 20px; right: 20px; width: 40px; height: 40px; background: #fff7; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .music-icon { width: 20px; height: 20px; background: #0077be; border-radius: 50%; }
+        .muted .music-icon { background: #ff0000; }
     </style>
 </head>
 <body>
-    <div class="game-container">
+    <div style="text-align:center;margin-top:60px;">
         <div class="shell" onclick="openShell(this)"></div>
         <div class="shell" onclick="openShell(this)"></div>
         <div class="shell" onclick="openShell(this)"></div>
@@ -188,154 +26,46 @@
         <div class="shell" onclick="openShell(this)"></div>
         <div class="shell" onclick="openShell(this)"></div>
     </div>
-    
     <div class="popup" id="popup">
         <p id="reward-message"></p>
-        <button class="claim-button" onclick="claimReward()">领取奖励</button>
+        <button class="claim-button" onclick="closePopup()">关闭</button>
     </div>
-    
-    <!-- 音乐控制按钮 -->
-    <div class="music-control" onclick="toggleMusic()">
+    <div class="music-control" onclick="toggleMusic()" id="musicBtn">
         <div class="music-icon"></div>
     </div>
-    
-    <!-- 使用内嵌音频代替外部文件 -->
-    <audio id="background-sound" loop>
-        <source src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA" type="audio/wav">
+    <audio id="background-sound" preload="auto" loop>
+        <source src="oceanwave.ogg" type="audio/ogg">
+        您的浏览器不支持音频元素。
     </audio>
-    
     <script>
-        // 创建气泡效果
-        function createBubbles() {
-            for (let i = 0; i < 20; i++) {
-                const bubble = document.createElement('div');
-                bubble.classList.add('bubble');
-                
-                // 随机大小和位置
-                const size = Math.random() * 30 + 10;
-                const left = Math.random() * 100;
-                
-                bubble.style.width = `${size}px`;
-                bubble.style.height = `${size}px`;
-                bubble.style.left = `${left}%`;
-                
-                // 随机动画时间
-                const animationDuration = Math.random() * 10 + 5;
-                bubble.style.animation = `bubble ${animationDuration}s linear infinite`;
-                bubble.style.animationDelay = `${Math.random() * 5}s`;
-                
-                document.body.appendChild(bubble);
-            }
-        }
-        
-        // 创建简单的音频
-        function createSimpleAudio() {
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                const oscillator = audioContext.createOscillator();
-                const gainNode = audioContext.createGain();
-                
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(220, audioContext.currentTime); // 设置频率为220Hz (A3)
-                
-                gainNode.gain.setValueAtTime(0.1, audioContext.currentTime); // 设置音量
-                
-                oscillator.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                
-                return {
-                    play: function() {
-                        oscillator.start();
-                    },
-                    pause: function() {
-                        oscillator.stop();
-                    }
-                };
-            } catch (e) {
-                console.error('创建音频失败:', e);
-                return {
-                    play: function() {},
-                    pause: function() {}
-                };
-            }
-        }
-        
-        // 音乐控制
         let isMusicPlaying = false;
-        const musicControl = document.querySelector('.music-control');
+        const musicControl = document.getElementById('musicBtn');
         const backgroundSound = document.getElementById('background-sound');
-        let simpleAudio = null;
-        
         function toggleMusic() {
             if (isMusicPlaying) {
                 backgroundSound.pause();
-                if (simpleAudio) {
-                    try {
-                        simpleAudio.pause();
-                    } catch (e) {
-                        console.error('停止音频失败:', e);
-                    }
-                }
                 musicControl.classList.add('muted');
             } else {
-                try {
-                    backgroundSound.play().catch(e => {
-                        console.log('无法播放音频元素，尝试使用Web Audio API');
-                        if (!simpleAudio) {
-                            simpleAudio = createSimpleAudio();
-                        }
-                        simpleAudio.play();
-                    });
-                } catch (e) {
-                    console.error('播放音频失败:', e);
-                }
+                backgroundSound.play();
                 musicControl.classList.remove('muted');
             }
             isMusicPlaying = !isMusicPlaying;
         }
-        
-        // 奖励设置
-        const rewards = [
-            { text: "恭喜找到幸运贝壳！", chance: 70 },
-            { text: "解锁稀有珍珠！", chance: 20 },
-            { text: "发现海底宝藏！", chance: 10 }
-        ];
-
         function openShell(shell) {
-            const random = Math.random() * 100;
-            let cumulativeChance = 0;
-            let rewardText = "";
-
-            for (const reward of rewards) {
-                cumulativeChance += reward.chance;
-                if (random < cumulativeChance) {
-                    rewardText = reward.text;
-                    break;
-                }
-            }
-
-            document.getElementById('reward-message').innerText = `恭喜！🎉 ${rewardText}`;
+            document.getElementById('reward-message').innerText = "恭喜获得奖励！";
             document.getElementById('popup').style.display = 'block';
-            shell.classList.add('clicked'); // 添加动画类
-            shell.style.pointerEvents = 'none'; // 禁止进一步点击
-            
-            // 如果音乐未播放，尝试在用户交互时播放
-            if (!isMusicPlaying) {
-                toggleMusic();
-            }
+            shell.style.background = "#ffe4b5";
+            shell.style.pointerEvents = "none";
+            if (!isMusicPlaying) toggleMusic();
         }
-
-        function claimReward() {
-            window.location.href = "https://wa.me/your-whatsapp-link";
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
         }
-        
-        // 页面加载时创建气泡
-        window.onload = function() {
-            createBubbles();
-            
-            // 添加音乐控制初始状态
-            musicControl.classList.add('muted');
-        };
+        // 兼容GitHub Pages自动播放策略，首次用户点击才允许播放
+        document.addEventListener('click', function enableAudio() {
+            backgroundSound.load();
+            document.removeEventListener('click', enableAudio);
+        }, { once: true });
     </script>
 </body>
 </html>
